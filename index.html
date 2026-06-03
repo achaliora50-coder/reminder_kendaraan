@@ -1,26 +1,106 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <title>Reminder Kendaraan</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengingat Pajak Kendaraan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gray-100 font-sans">
 
-<h1>Data Kendaraan</h1>
+    <nav class="bg-blue-600 p-4 text-white shadow-md">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold">OtoRemind 🚗</h1>
+            <span>Halo, Pengguna</span>
+        </div>
+    </nav>
 
-<table border="1" id="tabel">
-    <thead>
-        <tr>
-            <th>Plat</th>
-            <th>Kendaraan</th>
-            <th>Pajak</th>
-            <th>Plat 5 Tahun</th>
-            <th>KIR</th>
-        </tr>
-    </thead>
-    <tbody></tbody>
-</table>
+    <main class="container mx-auto mt-10 p-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            <div class="bg-white p-6 rounded-lg shadow-md col-span-1">
+                <h2 class="text-lg font-semibold mb-4 text-gray-700">Tambah Kendaraan</h2>
+                <form id="vehicleForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600">Plat Nomor</label>
+                        <input type="text" id="plat" placeholder="B 1234 ABC" class="w-full p-2 border rounded mt-1 uppercase" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600">Nama Kendaraan</label>
+                        <input type="text" id="nama" placeholder="Vario 150 / Avanza" class="w-full p-2 border rounded mt-1" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600">Jatuh Tempo Pajak Tahunan</label>
+                        <input type="date" id="pajak" class="w-full p-2 border rounded mt-1" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600">Jatuh Tempo Ganti Plat (5 Tahun)</label>
+                        <input type="date" id="plat5tahun" class="w-full p-2 border rounded mt-1" required>
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition">Simpan Kendaraan</button>
+                </form>
+            </div>
 
-<script src="script.js"></script>
+            <div class="bg-white p-6 rounded-lg shadow-md col-span-2">
+                <h2 class="text-lg font-semibold mb-4 text-gray-700">Daftar Kendaraan & Status</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-200 text-gray-700 text-sm">
+                                <th class="p-3">Plat</th>
+                                <th class="p-3">Kendaraan</th>
+                                <th class="p-3">Pajak Tahunan</th>
+                                <th class="p-3">Ganti Plat</th>
+                            </tr>
+                        </thead>
+                        <tbody id="vehicleTableBody" class="text-sm text-gray-600">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
 
+        </div>
+    </main>
+
+    <script>
+        // Simulasi Database Lokal menggunakan LocalStorage
+        const form = document.getElementById('vehicleForm');
+        const tableBody = document.getElementById('vehicleTableBody');
+
+        function loadVehicles() {
+            tableBody.innerHTML = '';
+            const vehicles = JSON.parse(localStorage.getItem('vehicles')) || [];
+            
+            vehicles.forEach(v => {
+                const row = `
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="p-3 font-bold">${v.plat}</td>
+                        <td class="p-3">${v.nama}</td>
+                        <td class="p-3 text-red-500 font-semibold">${v.pajak}</td>
+                        <td class="p-3 text-red-700 font-semibold">${v.plat5tahun}</td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+        }
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const plat = document.getElementById('plat').value;
+            const nama = document.getElementById('nama').value;
+            const pajak = document.getElementById('pajak').value;
+            const plat5tahun = document.getElementById('plat5tahun').value;
+
+            const vehicles = JSON.parse(localStorage.getItem('vehicles')) || [];
+            vehicles.push({ plat, nama, pajak, plat5tahun });
+            localStorage.setItem('vehicles', JSON.stringify(vehicles));
+
+            form.reset();
+            loadVehicles();
+        });
+
+        // Jalankan saat halaman dibuka
+        loadVehicles();
+    </script>
 </body>
 </html>
